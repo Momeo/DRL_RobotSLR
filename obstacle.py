@@ -131,15 +131,42 @@ def generate_env4():
     return obstacle_list
 
 
-def generate_unit(obstacle_list, w):
+def generate_dynamic():
+    obstacle_list = []
+    w = 40
+    obstacle_list.append(Squ(np.array([125, 125]), w))
+    obstacle_list.append(Squ(np.array([125, 375]), w))
+    obstacle_list.append(Squ(np.array([250, 250]), w))
+    obstacle_list.append(Squ(np.array([250, 250]), w))
+    obstacle_list.append(Squ(np.array([375, 125]), w))
+    obstacle_list.append(Squ(np.array([375, 375]), w))
+    obstacle_offset = np.random.randint(-3, 3, size=[len(obstacle_list), 2]).tolist()
+    return obstacle_list, obstacle_offset
+
+
+def generate_unit(obstacle_list, w, car_loc=None):
     if obstacle_list:
         Flag = True
         while Flag:
             Flag = False
             loc = np.random.randint(0, 500, size=2)
             for o in obstacle_list:
-                if np.linalg.norm(loc - o.location) < w+o.r:
-                    Flag = True
+                if car_loc is None:
+                    if np.linalg.norm(loc - o.location) < w+o.r:
+                        Flag = True
+                else:
+                    if np.linalg.norm(loc - o.location) < w + o.r and np.linalg.norm(loc - car_loc) < w + o.r:
+                        Flag = True
         return loc
     return np.random.randint(0, 500, size=2)
 
+
+def dynamic_refresh(obstacle_list, obstacle_offset, car_loc):
+    vertical_max = horizen_max = 500
+    for j in range(len(obstacle_list[:-1])):
+        i = obstacle_list[j]
+        if (i.boundary[:, 0]<0).all() or (i.boundary[:,0]>vertical_max).all() or (i.boundary[:,1]<0).all() or (i.boundary[:,1]>horizen_max).all():
+            loc = generate_unit(obstacle_list[:-1], 40, car_loc)
+            obstacle_list[j] = Squ(loc, 40)
+            obstacle_offset[j] = np.random.randint(-2, 2, size=[1, 2]).tolist()
+    return obstacle_list, obstacle_offset

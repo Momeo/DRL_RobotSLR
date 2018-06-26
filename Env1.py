@@ -17,10 +17,10 @@ class CarEnv(object):
     viewer_xy = (500, 500)
     sensor_max = 200.
     start_point = [450, 300]
-    speed = 40.
+    speed = 30.
     trajectory = None
     dt = 0.1
-    determined_env = False
+    determined_env = True
 
     def __init__(self, discrete_action=False):
         self.is_discrete_action = discrete_action
@@ -35,6 +35,7 @@ class CarEnv(object):
         self.sensor = SLR(self.n_sensor)
 
     def step(self, action):
+
         if self.is_discrete_action:
             action = self.actions[action]
         else:
@@ -63,7 +64,7 @@ class CarEnv(object):
             rotation = np.random.rand() * 2 * np.pi
             self.car_info[:3] = np.array([*self.start_point, rotation])
         else:
-            self.obstacle_list = obstacle.generate_env4()
+            self.obstacle_list = obstacle.generate_env1()
             self.start_point = [200, 50]
             self.car_info[:3] = np.array([*self.start_point, 0])
         obstacle_box_window = obstacle.Squ(np.array([250, 250]), 250)
@@ -141,6 +142,7 @@ class Viewer(pyglet.window.Window):
                 self.obstacle.append(self.batch.add(num, pyglet.gl.GL_QUADS, background, ('v2f', i.boundary.flatten()), ('c3B', (134, 181, 244) * num)))
             else:
                 self.obstacle.append(self.batch.add(num, pyglet.gl.GL_POLYGON, background, ('v2f', i.boundary.flatten()),('c3B', (134, 181, 244) * num)))
+        #self.obstacle.append(self.batch.add(4, pyglet.gl.GL_POLYGON, background, ('v2f', [0,480,20,480,20,500,0,500]),('c3B', (255, 255, 0) * 4)))
 
     def render(self, obstacle_list):
         pyglet.clock.tick()

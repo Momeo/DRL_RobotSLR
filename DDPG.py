@@ -2,14 +2,14 @@ import tensorflow as tf
 import numpy as np
 import os
 import shutil
-from Env3 import CarEnv
+from Env2 import CarEnv
 
 
 np.random.seed(1)
 tf.set_random_seed(1)
 
-MAX_EPISODES = 500
-MAX_EP_STEPS = 600
+MAX_EPISODES = 700
+MAX_EP_STEPS = 700
 LR_A = 1e-4  # learning rate for actor
 LR_C = 1e-4  # learning rate for critic
 GAMMA = 0.9  # reward discount
